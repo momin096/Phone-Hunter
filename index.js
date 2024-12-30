@@ -3,10 +3,12 @@ const loadAllPhones = async (status, brandName) => {
     document.getElementById('spinner').style.display = 'none';
 
     const response = await fetch(`https://openapi.programming-hero.com/api/phones?search=${brandName ? brandName : "iphone"}`);
+    
     const data = await response.json()
 
+    // console.log(data.data[1].brand);
     if (status) {
-        displayAllPhone(data.data);
+        displayAllPhone(data.data,brandName);
     }
     else {
         displayAllPhone(data.data.slice(0, 6));
@@ -14,10 +16,12 @@ const loadAllPhones = async (status, brandName) => {
 }
 
 const displayAllPhone = (phones) => {
+
+    document.getElementById('phones-container').innerHTML = '';
     const phoneContainer = document.getElementById('phones-container');
 
     phones.forEach(phone => {
-        const {brand , image, slug} = phone;
+        const { brand, image, slug } = phone;
         const div = document.createElement('div');
         div.innerHTML = `
         <div class="card m-2 bg-base-100 w-96 shadow-xl">
@@ -37,13 +41,14 @@ const displayAllPhone = (phones) => {
         </div>
     `;
 
-    phoneContainer.appendChild(div);
+        phoneContainer.appendChild(div);
     });
 }
 
 
-const handleShowAll = (phones) => {
-    loadAllPhones(true, "iphone");
+const handleShowAll = () => {
+    const searchText = document.getElementById('search-box').value;
+    loadAllPhones(true, searchText);
 }
 
 const handleSearch = () => {
@@ -55,12 +60,12 @@ const handleSearch = () => {
 }
 
 
-const phoneDetails = async(slugs) => {
+const phoneDetails = async (slugs) => {
     const response = await fetch(`https://openapi.programming-hero.com/api/phone/${slugs}`);
     const data = await response.json();
     console.log(data.data);
 
-    const {brand, image,slug} = data.data;
+    const { brand, image, slug } = data.data;
 
     const modalContainer = document.getElementById('modal-container');
     modalContainer.innerHTML = `
